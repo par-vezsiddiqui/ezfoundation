@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1a73e8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://securetoken.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <title>ez Foundation | Find the support behind your potential</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Layout and account overlays */
+      .site-header { position: sticky !important; top: 0; z-index: 15; background: var(--paper); }
+      .settings-backdrop { position: fixed; inset: 0; z-index: 25; display: grid; place-items: center; padding: 20px; background: rgba(16,45,79,.48); backdrop-filter: blur(5px); }
+      .settings-backdrop.hidden { display: none; }
+      .settings-modal { position: relative; width: min(500px, 100%); max-height: calc(100vh - 40px); overflow: auto; padding: 32px; background: var(--paper); border-radius: 12px; box-shadow: 0 28px 80px rgba(16,45,79,.25); }
+      .settings-modal h2 { margin: 8px 0; color: var(--ink); font: 800 30px Manrope; }
+      .settings-intro { margin: 0 0 22px; color: var(--muted); font-size: 13px; }
+      .settings-list { display: grid; gap: 10px; margin-bottom: 22px; }
+      .settings-list div { display: grid; gap: 2px; padding: 14px; background: var(--blue); border-radius: 7px; }
+      .settings-list span { color: var(--muted); font-size: 12px; }
+      .danger-zone { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+      .danger-zone strong { color: #a64d43; }
+      .danger-zone p { color: var(--muted); font-size: 12px; }
+      .delete-button { background: #b9584d; color: white; }
+      .delete-button:disabled { cursor: not-allowed; opacity: .45; }
+      /* Foundation theme */
+      :root { --ink: #155451; --ink-deep: #153b3b; --paper: #fffdf8; --cream: #f4f6ef; --muted: #607674; --line: #dce8e3; --blue: #e5f2ed; --yellow: #f3c85b; --coral: #df755d; --shadow: 0 18px 50px rgba(21,84,81,.1); }
+      body { background: var(--paper); }
+      .site-header { border-bottom: 1px solid var(--line); box-shadow: 0 4px 18px rgba(21,84,81,.04); }
+      .brand-mark { border-radius: 10px 10px 10px 3px; }
+      .hero { position: relative; }
+      .hero-copy { position: relative; z-index: 1; }
+      .hero h1 em, .how h2 em, .dashboard-top h2 em, .explore-heading h2 em, .assessment h2 em, .mentors h2 em, .mission h2 em { color: var(--coral); }
+      .purpose-note { display: flex; gap: 12px; align-items: flex-start; max-width: 470px; margin-top: 24px; padding: 14px 16px; background: #eef7f1; border-left: 4px solid var(--coral); border-radius: 0 10px 10px 0; color: var(--ink-deep); }
+      .purpose-note strong { display: block; margin-bottom: 2px; font-size: 13px; }
+      .purpose-note span { display: block; color: var(--muted); font-size: 11px; line-height: 1.45; }
+      .impact-strip { background: var(--ink); color: #f8fffa; }
+      .impact-strip .stat span, .impact-strip .impact-intro p { color: #c6dfd8; }
+      .explore-section { background: #edf5f1; }
+      .explore-card, .dashboard-layout, .assessment-panel, .mentor-card { border-color: var(--line); box-shadow: 0 12px 30px rgba(21,84,81,.06); }
+      .mission { background: var(--ink); color: #f7fffb; }
+      .mission p, .mission .kicker { color: #c6dfd8; }
+      .kicker, .question-label { color: #32736c; }
+      body { font-size: 16px; line-height: 1.6; }
+      p { line-height: 1.65; }
+      .hero h1 { line-height: 1.1; letter-spacing: -2px; }
+      .section-heading h2, .explore-heading h2, .dashboard-top h2, .assessment h2, .mentors h2, .mission h2 { line-height: 1.14; letter-spacing: -1px; }
+      .section-heading > p, .explore-heading > p { max-width: 390px; line-height: 1.65; font-size: 15px; }
+      .step p, .explore-card p, .assessment-question > p, .mentor-card > p { font-size: 14px; line-height: 1.6; }
+      .kicker, .question-label { letter-spacing: .08em; }
+      .main-nav { font-size: 14px; }
+      .button { min-height: 46px; }
+      :focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+      @media (max-width: 850px) { .purpose-note { margin-top: 20px; } }
+      @media (max-width: 850px) {
+        .site-header { position: relative; }
+        .main-nav.mobile-open { display: flex; position: absolute; left: 0; right: 0; top: 70px; z-index: 10; flex-direction: column; gap: 0; padding: 10px 18px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
+        .main-nav.mobile-open a { padding: 13px 0; }
+        .section-heading > p, .explore-heading > p { margin-top: 28px; }
+      }
+      @media (max-width: 520px) {
+        .brand { gap: 7px; font-size: 18px; white-space: nowrap; }
+        .brand-mark { width: 29px; height: 29px; font-size: 20px; }
+        .site-header { gap: 10px; }
+        .header-actions { gap: 8px; }
+      }
+      /* Material-inspired theme layer */
+      :root { --ink: #1a73e8; --ink-deep: #202124; --paper: #ffffff; --cream: #f8f9fa; --muted: #5f6368; --line: #dadce0; --blue: #e8f0fe; --yellow: #fbbc04; --coral: #d93025; --shadow: 0 1px 3px rgba(60,64,67,.18), 0 4px 8px rgba(60,64,67,.08); }
+      body { background: var(--paper); color: var(--ink-deep); font-family: Roboto, Arial, sans-serif; }
+      .brand, .hero h1, .section-heading h2, .explore-heading h2, .dashboard-top h2, .assessment h2, .mentors h2, .mission h2, .welcome-row h3, .recommendation-head h3, .explore-card h3 { font-family: Roboto, Arial, sans-serif; letter-spacing: 0; }
+      .site-header { background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 1px 2px rgba(60,64,67,.12); }
+      .brand-mark { border-radius: 8px; }
+      .button { border-radius: 8px; box-shadow: none; transition: background-color .2s, box-shadow .2s; }
+      .button:hover { transform: none; box-shadow: 0 2px 5px rgba(60,64,67,.22); }
+      .button-primary, .button-dark, .button-light { background: var(--ink); color: #fff; }
+      .button-outline { border-color: var(--line); color: var(--ink); }
+      .explore-card, .dashboard-layout, .assessment-panel, .mentor-card, .hero-card, .auth-modal, .settings-modal { border-radius: 8px; box-shadow: var(--shadow); }
+      .explore-section { background: var(--cream); }
+      .filter { border-radius: 20px; }
+      .search-bar, .auth-field input, .choice { border-radius: 8px; }
+      .purpose-note { background: var(--blue); border-left-color: var(--ink); }
+      .hero h1 em, .how h2 em, .dashboard-top h2 em, .explore-heading h2 em, .assessment h2 em, .mentors h2 em, .mission h2 em { color: var(--ink); }
+      :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+      .site-loader { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #111; transition: opacity .35s, visibility .35s; }
+      .site-loader.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+      .loader-inner { display: grid; justify-items: center; gap: 16px; animation: loader-enter .65s cubic-bezier(.2,.8,.2,1) both; }
+      .loader-name { position: relative; color: #fff; font: 700 clamp(30px, 5vw, 44px) Roboto, Arial, sans-serif; letter-spacing: -.8px; text-decoration: underline; text-decoration-color: #fbbc04; text-decoration-thickness: 3px; text-underline-offset: 9px; }
+      .loader-caption { color: #b8b8b8; font: 400 12px Roboto, Arial, sans-serif; letter-spacing: .4px; }
+      .loader-caption::after { content: ' . . .'; color: #fff; letter-spacing: 2px; animation: loader-dots 1.2s steps(3, end) infinite; }
+      @keyframes loader-enter { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+      @keyframes loader-dots { 0%, 20% { opacity: .25; } 50% { opacity: .65; } 100% { opacity: 1; } }
+      /* Active editorial theme and responsive overrides */
+      :root { --ink: #111111; --ink-deep: #202020; --paper: #f7f5ef; --cream: #eeece6; --muted: #686761; --line: #d6d3ca; --blue: #e6e5df; --yellow: #f4c84a; --coral: #e23b32; --shadow: 0 2px 0 rgba(17,17,17,.08), 0 12px 30px rgba(17,17,17,.08); }
+      body { background: var(--paper); }
+      .site-header { border-bottom: 1px solid var(--ink); box-shadow: none; }
+      .brand-mark { background: var(--yellow); color: #111; }
+      .brand, .hero h1, .section-heading h2, .explore-heading h2, .dashboard-top h2, .assessment h2, .mentors h2, .mission h2, .welcome-row h3, .recommendation-head h3, .explore-card h3 { font-family: Roboto, Arial, sans-serif; }
+      .hero h1, .section-heading h2, .explore-heading h2, .dashboard-top h2, .assessment h2, .mentors h2, .mission h2 { font-weight: 700; }
+      .hero h1 em, .how h2 em, .dashboard-top h2 em, .explore-heading h2 em, .assessment h2 em, .mentors h2 em, .mission h2 em { color: var(--coral); }
+      .button-primary, .button-dark, .button-light { background: var(--ink); color: #fff; }
+      .button-outline { border-color: var(--ink); color: var(--ink); }
+      .impact-strip, .mission { background: var(--ink); }
+      .explore-section { background: var(--cream); }
+      .explore-card, .dashboard-layout, .assessment-panel, .mentor-card, .hero-card, .auth-modal, .settings-modal { box-shadow: var(--shadow); }
+      .kicker, .question-label { color: var(--coral); }
+      .site-footer { background: #111; color: #fff; padding: 72px 0 24px; }
+      .footer-top { display: grid; grid-template-columns: minmax(250px, 1fr) 2fr; gap: 80px; align-items: start; padding-bottom: 54px; border-bottom: 1px solid #3b3b3b; }
+      .footer-brand { color: #fff; font-size: 25px; }
+      .footer-brand .brand-mark { color: #111; }
+      .footer-top > div:first-child p { max-width: 280px; margin: 18px 0 0; color: #bdbdbd; font-size: 14px; line-height: 1.65; }
+      .footer-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+      .footer-links div { display: grid; align-content: start; gap: 11px; }
+      .footer-links strong { color: #fbbc04; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+      .footer-links a { color: #d6d6d6; font-size: 13px; transition: color .2s; }
+      .footer-links a:hover { color: #fff; }
+      .footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 22px; color: #999; font-size: 11px; }
+      .footer-note { display: block; max-width: 300px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #3b3b3b; color: #fff; font-size: 13px; font-weight: 500; }
+      .mission-grid { grid-template-columns: 1fr; gap: 32px; }
+      .mission-grid > div { min-width: 0; max-width: 760px; }
+      .mission h2 { display: block; max-width: 100%; white-space: normal; overflow-wrap: anywhere; word-break: normal; }
+      :root { --ink: #111111; --ink-deep: #202020; --paper: #f7f5ef; --cream: #eeece6; --muted: #686761; --line: #d6d3ca; --blue: #e6e5df; --yellow: #f4c84a; --coral: #e23b32; --shadow: 0 2px 0 rgba(17,17,17,.08), 0 12px 30px rgba(17,17,17,.08); }
+      body { color: var(--ink-deep); background: var(--paper); }
+      .site-header { border-bottom-color: var(--ink); }
+      .brand-mark, .footer-brand .brand-mark { color: #111; }
+      .site-footer { background: #111; }
+      .loader-name { color: #fff; }
+      .reading-progress { position: fixed; top: 82px; left: 0; z-index: 16; width: 100%; height: 2px; background: rgba(17,17,17,.08); pointer-events: none; }
+      .reading-progress-bar { display: block; width: 0; height: 100%; background: linear-gradient(90deg, #d98232 0%, #d9b84d 45%, #4e8a55 100%); box-shadow: 0 0 5px rgba(78,138,85,.3); transition: width .18s ease-out; }
+      .mission h2, .mission .kicker, .mission p, .impact-strip .impact-intro p, .impact-strip .stat span { color: #fff; }
+      .mission h2 em { color: #f4c84a; }
+      .mission .mission-lead { color: #fff; }
+      .hero { min-height: 640px; align-items: center; }
+      .hero-copy { max-width: 620px; }
+      .hero-lead { max-width: 560px; font-size: 17px; }
+      .hero-actions { gap: 12px; margin-top: 28px; }
+      .button { box-shadow: 0 1px 2px rgba(17,17,17,.12); }
+      .button:hover { box-shadow: 0 8px 18px rgba(17,17,17,.15); }
+      .purpose-note { box-shadow: 0 8px 20px rgba(17,17,17,.06); }
+      .step, .explore-card, .mentor-card { transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+      .step:hover, .explore-card:hover, .mentor-card:hover { transform: translateY(-5px); border-color: var(--coral); box-shadow: 0 14px 28px rgba(17,17,17,.12); }
+      .step-featured { border-top: 4px solid var(--coral); }
+      .search-bar { box-shadow: 0 4px 14px rgba(17,17,17,.06); }
+      .filter.active { box-shadow: 0 3px 8px rgba(17,17,17,.12); }
+      .dashboard-layout { overflow: hidden; }
+      .metric-card { transition: background-color .2s ease, transform .2s ease; }
+      .metric-card:hover { background: #f3eee0; transform: translateY(-2px); }
+      .dashboard-sidebar { background: #f1ede2; }
+      .side-link { border-radius: 8px; margin: 2px 10px; transition: background-color .2s, color .2s, transform .2s; }
+      .side-link:hover { background: #fff; transform: translateX(2px); }
+      .side-link.active { background: var(--ink); color: #fff; box-shadow: 0 4px 10px rgba(17,17,17,.14); }
+      .side-link.active b { background: var(--yellow); color: var(--ink); }
+      .recommendation-head { padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+      .profile-ring { border-color: var(--coral); }
+      .privacy-consent { margin-bottom: 22px; padding: 14px 16px; border: 1px solid var(--line); border-left: 4px solid var(--yellow); border-radius: 8px; background: rgba(255,255,255,.7); }
+      .privacy-consent label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+      .privacy-consent input { width: 17px; height: 17px; margin: 2px 0 0; accent-color: var(--ink); }
+      .privacy-consent span { display: grid; gap: 3px; }
+      .privacy-consent strong { color: var(--ink); font-size: 13px; }
+      .privacy-consent small { color: var(--muted); font-size: 11px; line-height: 1.45; }
+      .assessment-question .choice:disabled, .assessment-question .text-input:disabled, #assessmentNext:disabled { cursor: not-allowed; opacity: .5; }
+      .support-constellation { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+      .support-chip { position: absolute; display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid rgba(17,17,17,.12); border-radius: 999px; background: rgba(255,255,255,.92); color: var(--ink); box-shadow: 0 8px 18px rgba(17,17,17,.1); font-size: 11px; font-weight: 700; animation: chip-float 4s ease-in-out infinite; }
+      .support-chip b { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--yellow); color: var(--ink); font-size: 13px; }
+      .chip-funding { top: 8%; left: 5%; }
+      .chip-home { top: 22%; right: 3%; animation-delay: -.8s; }
+      .chip-skills { bottom: 20%; left: 3%; animation-delay: -1.6s; }
+      .chip-mentor { bottom: 5%; right: 8%; animation-delay: -2.4s; }
+      @keyframes chip-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+      .motive-3d { position: absolute; right: 3%; bottom: 9%; z-index: 5; width: 238px; height: 164px; perspective: 900px; transform: rotate(-5deg); }
+      .motive-card { position: absolute; display: grid; gap: 4px; width: 218px; min-height: 72px; padding: 13px 15px; border: 1px solid rgba(17,17,17,.14); border-radius: 4px; box-shadow: 0 12px 20px rgba(17,17,17,.14); color: #fff; transform: skewY(-3deg) rotateX(7deg); transform-origin: bottom left; }
+      .motive-card span { color: var(--yellow); font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+      .motive-card strong { font-size: 12px; letter-spacing: .04em; }
+      .motive-card small { color: rgba(255,255,255,.74); font-size: 10px; }
+      .motive-learn { right: 12px; bottom: 82px; background: #155451; transform: translateZ(0) skewY(-3deg) rotateX(7deg); }
+      .motive-support { right: 6px; bottom: 41px; background: #c96552; transform: translateZ(20px) skewY(-3deg) rotateX(7deg); }
+      .motive-grow { right: 0; bottom: 0; background: #202020; transform: translateZ(40px) skewY(-3deg) rotateX(7deg); }
+      .support-network { position: absolute; left: 50%; top: 50%; width: 290px; height: 290px; transform: translate(-50%, -50%); border: 1px solid rgba(17,17,17,.16); border-radius: 50%; background: radial-gradient(circle at 50% 50%, rgba(244,200,74,.25), transparent 57%), rgba(255,255,255,.36); box-shadow: inset 0 0 0 18px rgba(255,255,255,.25), 0 20px 45px rgba(17,17,17,.1); }
+      .network-core { position: absolute; left: 50%; top: 50%; z-index: 2; display: grid; place-items: center; width: 116px; height: 116px; padding: 12px; transform: translate(-50%, -50%); border: 4px solid var(--yellow); border-radius: 50%; background: var(--ink); color: #fff; text-align: center; box-shadow: 0 12px 20px rgba(17,17,17,.18); }
+      .network-core strong { color: var(--yellow); font-size: 28px; line-height: 1; }
+      .network-core small { font-size: 8px; font-weight: 700; letter-spacing: .1em; line-height: 1.35; }
+      .network-node { position: absolute; z-index: 3; display: grid; place-items: center; width: 58px; height: 58px; border: 3px solid var(--paper); border-radius: 50%; background: #fff; color: var(--ink); box-shadow: 0 8px 18px rgba(17,17,17,.14); font-size: 21px; font-weight: 700; }
+      .network-node small { position: absolute; top: 62px; color: var(--ink); font-size: 9px; font-weight: 800; white-space: nowrap; }
+      .node-funding { top: 7%; left: 13%; background: #f4c84a; }
+      .node-skills { top: 8%; right: 11%; background: #d96b58; color: #fff; }
+      .node-mentor { bottom: 9%; left: 10%; background: #155451; color: #fff; }
+      .node-home { bottom: 8%; right: 9%; background: #fff; }
+      .network-line { position: absolute; z-index: 1; left: 50%; top: 50%; width: 1px; height: 102px; transform-origin: top; background: rgba(17,17,17,.25); }
+      .line-a { transform: rotate(-48deg); }
+      .line-b { transform: rotate(48deg); }
+      .line-c { transform: rotate(-132deg); }
+      .line-d { transform: rotate(132deg); }
+      @media (max-width: 850px) { .hero { min-height: auto; } .hero-visual { margin-top: 14px; } }
+      @media (max-width: 520px) { .hero-actions { flex-wrap: wrap; } .hero-actions .button { flex: 1 1 150px; justify-content: center; } .visual-label { display: none; } .hero-visual { margin-top: 28px; overflow: hidden; } .support-chip { padding: 7px 9px; font-size: 10px; } .support-chip b { width: 19px; height: 19px; font-size: 11px; } .chip-funding { top: 8%; left: 0; } .chip-home { top: 20%; right: 0; } .chip-skills { bottom: 20%; left: 0; } .chip-mentor { bottom: 6%; right: 0; } .motive-3d { right: 50%; bottom: 7%; width: 205px; transform: translateX(50%) rotate(-4deg) scale(.84); transform-origin: bottom center; } .support-network { width: 238px; height: 238px; } .network-core { width: 98px; height: 98px; } .network-node { width: 48px; height: 48px; font-size: 17px; } .network-node small { top: 52px; font-size: 8px; } .network-line { height: 83px; } }
+      @media (max-width: 850px) { .footer-top { grid-template-columns: 1fr; gap: 42px; } .footer-links { margin-top: 0; } }
+      @media (max-width: 850px) { .reading-progress { top: 82px; } }
+      @media (max-width: 520px) { .site-footer { padding-top: 54px; } .footer-links { grid-template-columns: 1fr 1fr; gap: 32px 20px; } .footer-links div:last-child { grid-column: span 2; } .footer-bottom { display: grid; justify-content: stretch; gap: 8px; } .mission h2 { font-size: clamp(32px, 10vw, 42px); line-height: 1.08; letter-spacing: -.5px; } }
+    </style>
+  </head>
+  <body>
+    <!-- Loading state -->
+    <div class="site-loader" id="siteLoader" role="status" aria-label="Loading ez Foundation"><div class="loader-inner"><span class="loader-name">ez Foundation</span><span class="loader-caption">Finding support for your next step</span></div></div>
+    <div class="app-shell">
+      <!-- Site navigation -->
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="ez Foundation home"><span class="brand-mark">e</span><span>ez Foundation</span></a>
+        <nav class="main-nav" aria-label="Primary navigation">
+          <a class="active" href="#top">Home</a><a href="#how-it-works">How it works</a><a href="#opportunities">Opportunities</a><a href="#mentors">Mentors</a><a href="#impact">Our impact</a>
+        </nav>
+        <div class="header-actions"><button class="icon-button" aria-label="Notifications">◌<span class="notification-dot"></span></button><button class="text-button" id="loginButton">Log in</button><button class="button button-dark" id="headerAuthButton">Get started <span>↗</span></button></div>
+        <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false">☰</button>
+      </header>
+      <div class="reading-progress" role="progressbar" aria-label="Page reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="reading-progress-bar"></span></div>
+
+      <!-- Public platform experience -->
+      <main id="top">
+        <!-- Hero and primary actions -->
+        <section class="hero section-wrap">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-dot"></span> India’s opportunity & guidance platform</div>
+            <h1>Your potential deserves the <em>right opportunity.</em></h1>
+            <p class="hero-lead">ez Foundation helps you discover scholarships, mentors, training, internships, and organizations that can move your future forward.</p>
+            <div class="hero-actions"><button class="button button-primary" data-action="assessment">Start your journey <span>→</span></button><button class="button button-outline" data-action="explore">Explore opportunities <span>↗</span></button></div>
+            <div class="hero-trust"><div class="avatar-stack"><span>PS</span><span>AK</span><span>MR</span><span>+25k</span></div><span><strong>25,000+ students</strong> finding their next step</span></div>
+          </div>
+          <div class="hero-visual">
+            <div class="support-network" aria-label="A network of support around each learner"><span class="network-line line-a"></span><span class="network-line line-b"></span><span class="network-line line-c"></span><span class="network-line line-d"></span><div class="network-core"><strong>ez</strong><small>SUPPORT<br />THAT MOVES<br />PEOPLE FORWARD</small></div><span class="network-node node-funding">₹<small>Funding</small></span><span class="network-node node-skills">✦<small>Skills</small></span><span class="network-node node-mentor">◎<small>Mentors</small></span><span class="network-node node-home">⌂<small>Residential</small></span></div>
+          </div>
+        </section>
+
+        <!-- Early-stage platform trust metrics -->
+        <section class="impact-strip"><div class="section-wrap impact-grid"><div class="impact-intro"><span class="line-accent"></span><p>Making opportunity<br /><strong>easier to reach.</strong></p></div><div class="stat"><strong data-count="25000">25,000+</strong><span>Students connected</span></div><div class="stat"><strong data-count="500">500+</strong><span>Verified organizations</span></div><div class="stat"><strong data-count="1200">1,200+</strong><span>Live opportunities</span></div><div class="stat"><strong data-count="300">300+</strong><span>Mentors ready to help</span></div></div></section>
+
+        <section class="how section-wrap" id="how-it-works"><div class="section-heading"><div><span class="kicker">HOW EZ FOUNDATION WORKS</span><h2>One clear path from<br /><em>potential to progress.</em></h2></div><p>We help you understand where you are, discover where you could go, and take the next step with confidence.</p></div><div class="steps"><article class="step"><span class="step-number">01</span><div class="step-icon">◎</div><h3>Create your profile</h3><p>Tell us about your education, skills, interests, and the support you need.</p><a href="#assessment">Build my profile <span>→</span></a></article><article class="step"><span class="step-number">02</span><div class="step-icon">⌁</div><h3>Take the assessment</h3><p>A friendly conversation to understand your interests and career direction.</p><a href="#assessment">Take assessment <span>→</span></a></article><article class="step step-featured"><span class="step-number">03</span><div class="step-icon">✦</div><h3>Get matched</h3><p>See opportunities, mentors, and programs selected around your unique profile.</p><a href="#opportunities">See my matches <span>→</span></a></article><article class="step"><span class="step-number">04</span><div class="step-icon">↗</div><h3>Connect & grow</h3><p>Apply, connect, get guidance, and track your journey in one place.</p><a href="#dashboard">Open my dashboard <span>→</span></a></article></div></section>
+
+        <section class="dashboard-preview section-wrap" id="dashboard"><div class="dashboard-top"><div><span class="kicker">A DASHBOARD THAT MOVES WITH YOU</span><h2>Meet your next<br /><em>possibility.</em></h2></div><div class="profile-snippet"><div class="profile-avatar">RS</div><div><strong>Rahul Sharma</strong><span>Profile strength <b>78%</b></span></div><div class="profile-ring">78</div></div></div><div class="dashboard-layout"><aside class="dashboard-sidebar"><div class="side-brand"><span class="brand-mark">e</span> My ez Foundation</div><div class="side-link active">▦ <span>Overview</span></div><div class="side-link">⌕ <span>Explore</span><b>3</b></div><div class="side-link">♡ <span>Saved</span></div><div class="side-link">◷ <span>Applications</span></div><div class="side-link">♧ <span>Mentors</span></div><div class="side-spacer"></div><div class="side-link">⚙ <span>Settings</span></div></aside><div class="dashboard-main"><div class="welcome-row"><div><h3>Good morning, Rahul <span>👋</span></h3><p>Here are a few opportunities selected for you.</p></div><button class="button button-dark" data-action="assessment">Complete profile <span>→</span></button></div><div class="metric-row"><div class="metric-card"><span class="metric-icon blue">◎</span><div><small>Profile completion</small><strong>78%</strong><div class="progress"><i style="width:78%"></i></div></div></div><div class="metric-card"><span class="metric-icon yellow">✦</span><div><small>Opportunity matches</small><strong>12</strong><span class="metric-note">3 new this week</span></div></div><div class="metric-card"><span class="metric-icon coral">◷</span><div><small>Active applications</small><strong>02</strong><span class="metric-note">1 needs attention</span></div></div></div><div class="recommendation-head"><div><h3>Recommended for you <span class="tiny-pill">12 matches</span></h3><p>Based on your interests in technology and financial support.</p></div><button class="link-button" data-action="explore">View all opportunities →</button></div><div class="opportunity-list"><article class="opportunity-card"><div class="org-logo org-purple">G</div><div class="opportunity-info"><div class="card-meta"><span class="verified">✓ Verified</span><span>·</span><span>Scholarship</span></div><h4>Google Generation Scholarship</h4><p>Support for students building a future in technology.</p><div class="opportunity-details"><span>◉ Pan India</span><span>◌ 18–24 years</span><span>Deadline 30 Sep</span></div></div><div class="match-score"><strong>94%</strong><span>match</span></div><button class="save-button" aria-label="Save opportunity">♡</button></article><article class="opportunity-card"><div class="org-logo org-orange">T</div><div class="opportunity-info"><div class="card-meta"><span class="verified">✓ Verified</span><span>·</span><span>Internship</span></div><h4>Tech for Good Fellowship</h4><p>Learn, build, and work alongside a mission-led team.</p><div class="opportunity-details"><span>◉ Bengaluru · Hybrid</span><span>◌ 19–25 years</span><span>Deadline 12 Oct</span></div></div><div class="match-score"><strong>89%</strong><span>match</span></div><button class="save-button" aria-label="Save opportunity">♡</button></article></div></div></div></section>
+
+        <section class="explore-section" id="opportunities"><div class="section-wrap"><div class="explore-heading"><div><span class="kicker">DISCOVER WITH CONFIDENCE</span><h2>Find the support<br />behind your <em>next move.</em></h2></div><p>Every listing is reviewed. Every match comes with a reason. You stay in control.</p></div><div class="search-bar"><span>⌕</span><input id="opportunitySearch" placeholder="Search scholarships, internships, training..." /><button class="button button-primary">Search <span>→</span></button></div><div class="filter-row"><button class="filter active">All opportunities</button><button class="filter">Scholarships</button><button class="filter">Internships</button><button class="filter">Mentorship</button><button class="filter">Training</button><button class="filter">Jobs</button><button class="filter filter-more">＋ More filters</button></div><div class="explore-grid" id="exploreGrid"><article class="explore-card" data-search="scholarship technology education pan india"><div class="explore-card-top"><span class="category-tag tag-blue">SCHOLARSHIP</span><button class="save-button">♡</button></div><h3>Technology Scholarship Program</h3><p>Digital education and financial support for aspiring technologists.</p><div class="explore-org"><div class="org-logo org-blue">N</div><span>Navodaya Foundation <b>✓</b></span></div><div class="card-footer"><span>₹50,000 support</span><span>89% match</span></div></article><article class="explore-card" data-search="internship social impact mumbai hybrid"><div class="explore-card-top"><span class="category-tag tag-orange">INTERNSHIP</span><button class="save-button">♡</button></div><h3>Social Impact Fellowship</h3><p>Make a measurable difference while growing your career toolkit.</p><div class="explore-org"><div class="org-logo org-orange">T</div><span>The Good Edge <b>✓</b></span></div><div class="card-footer"><span>Mumbai · Hybrid</span><span>84% match</span></div></article><article class="explore-card" data-search="mentorship career guidance online"><div class="explore-card-top"><span class="category-tag tag-purple">MENTORSHIP</span><button class="save-button">♡</button></div><h3>Career Compass Circles</h3><p>Small-group guidance with working professionals across industries.</p><div class="explore-org"><div class="org-logo org-purple">S</div><span>StepUp India <b>✓</b></span></div><div class="card-footer"><span>Online · Weekly</span><span>81% match</span></div></article></div><div class="empty-search" id="emptySearch">No opportunities match that search yet. Try “technology”, “internship”, or “scholarship”.</div></div></section>
+
+        <section class="assessment section-wrap" id="assessment"><div class="assessment-copy"><span class="kicker">YOUR OPPORTUNITY PROFILE</span><h2>Let’s find a direction<br />that feels <em>like you.</em></h2><p>This isn’t a test. It’s a short, thoughtful conversation about what you enjoy and where you want to go.</p><div class="assessment-note"><span>✦</span><p><strong>Takes about 4 minutes</strong><br />You can pause and come back anytime.</p></div></div><div class="assessment-panel"><div class="assessment-progress"><span>Step <b id="assessmentStep">1</b> of 4</span><div class="progress"><i id="assessmentProgress" style="width:25%"></i></div></div><div class="assessment-question" data-step="1"><span class="question-label">LET’S START WITH YOU</span><h3>Where are you in your journey?</h3><p>A little context helps us find support that fits your life right now.</p><div class="choice-grid"><button class="choice">Still in school</button><button class="choice">Undergraduate</button><button class="choice">Postgraduate</button><button class="choice">Recently graduated</button></div></div><div class="assessment-question hidden" data-step="2"><span class="question-label">WHAT PULLS YOU IN?</span><h3>What do you enjoy exploring?</h3><p>Choose everything that feels interesting. There are no wrong answers.</p><div class="choice-grid"><button class="choice">Technology</button><button class="choice">Design & arts</button><button class="choice">Business</button><button class="choice">Social impact</button><button class="choice">Healthcare</button><button class="choice">Teaching</button></div></div><div class="assessment-question hidden" data-step="3"><span class="question-label">YOUR NEXT STEP</span><h3>What support would help most?</h3><p>We’ll use this to make your recommendations more useful.</p><div class="choice-grid"><button class="choice">Scholarship</button><button class="choice">Mentorship</button><button class="choice">Skills training</button><button class="choice">Internship</button><button class="choice">Career guidance</button><button class="choice">Device support</button></div></div><div class="assessment-question hidden" data-step="4"><span class="question-label">A LITTLE MORE</span><h3>What would you like to become?</h3><p>Tell us in your own words. Your answer can change as you grow.</p><input class="text-input" placeholder="e.g. A software developer who solves real problems" /><div class="success-message"><span>✦</span> Your answers are private and only used to personalize your experience.</div></div><div class="assessment-footer"><button class="text-button" id="assessmentBack" disabled>← Back</button><button class="button button-primary" id="assessmentNext">Continue <span>→</span></button></div></div></section>
+
+        <section class="mentors section-wrap" id="mentors"><div class="mentors-heading"><div><span class="kicker">PEOPLE WHO GET IT</span><h2>Guidance feels better<br />when it’s <em>human.</em></h2></div><button class="button button-outline">Meet our mentors <span>↗</span></button></div><div class="mentor-grid"><article class="mentor-card"><div class="mentor-photo photo-one"><span>AK</span><i>✓</i></div><h3>Ananya Krishnan</h3><p>Product Designer · 8 yrs</p><div class="mentor-tags"><span>Design</span><span>Career switch</span></div><button class="link-button">Request mentorship →</button></article><article class="mentor-card"><div class="mentor-photo photo-two"><span>RV</span><i>✓</i></div><h3>Rohan Verma</h3><p>Software Engineer · 6 yrs</p><div class="mentor-tags"><span>Technology</span><span>First job</span></div><button class="link-button">Request mentorship →</button></article><article class="mentor-card mentor-quote"><span class="quote-mark">“</span><p>Sometimes one conversation is enough to see a path you couldn’t see before.</p><span class="quote-by">— Meera, ez Foundation mentor</span></article></div></section>
+
+        <section class="mission" id="impact"><div class="section-wrap mission-grid"><div><span class="kicker">WHY EZ FOUNDATION EXISTS</span><h2>Talent is everywhere.<br /><em>Opportunity is not.</em></h2></div><div><p class="mission-lead">We’re building the bridge between a young person’s potential and the people, programs, and opportunities ready to support it.</p><p>Not another directory. A thoughtful, transparent platform that helps students understand what they need, find their fit, and keep moving.</p><button class="button button-light">Read our story <span>↗</span></button></div></div></section>
+      </main>
+      <footer class="site-footer"><div class="section-wrap footer-top"><div><a class="brand footer-brand" href="#top"><span class="brand-mark">e</span><span>ez Foundation</span></a><p>Connecting potential<br />with opportunity.</p></div><div class="footer-links"><div><strong>Platform</strong><a href="#opportunities">Opportunities</a><a href="#mentors">Mentors</a><a href="#how-it-works">How it works</a></div><div><strong>For you</strong><a href="#assessment">Start assessment</a><a href="#dashboard">My dashboard</a><a href="#impact">Our impact</a></div><div><strong>Trust & safety</strong><a href="#top">Safety centre</a><a href="#top">Privacy</a><a href="#top">Report an issue</a></div></div></div><div class="section-wrap footer-bottom"><span>© 2025 ez Foundation</span><span>Built for every kind of ambition. <span class="footer-heart">♥</span></span><span>English <b>⌄</b></span></div></footer>
+    </div>
+    <div class="settings-backdrop hidden" id="settingsBackdrop" aria-hidden="true">
+      <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <button class="auth-close" id="settingsClose" aria-label="Close account settings">×</button>
+        <span class="kicker">ACCOUNT & PRIVACY</span>
+        <h2 id="settingsTitle">Manage your account</h2>
+        <p class="settings-intro">Your profile helps us suggest funding, residential programs, training, internships, mentors, and other support that fits your situation.</p>
+        <div class="settings-list"><div><strong>Information we use</strong><span>Education stage, interests, support needs, and goals.</span></div><div><strong>Your control</strong><span>Update your answers anytime or remove your account.</span></div></div>
+        <button class="button button-outline" id="settingsLogout">Log out</button>
+        <div class="danger-zone"><strong>Delete account</strong><p>This permanently removes your profile and signs you out. This cannot be undone.</p><label class="auth-check"><input type="checkbox" id="deleteConfirm" /> <span>I understand that my account and profile will be deleted.</span></label><button class="button delete-button" id="deleteAccount" disabled>Delete my account</button><p class="auth-error" id="deleteError" role="alert"></p></div>
+      </section>
+    </div>
+    <div class="auth-backdrop hidden" id="authBackdrop" aria-hidden="true">
+      <section class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+        <button class="auth-close" id="authClose" aria-label="Close authentication dialog">×</button>
+        <div class="auth-brand"><span class="brand-mark">e</span><span>ez Foundation</span></div>
+        <div class="auth-intro"><span class="kicker">YOUR NEXT STEP STARTS HERE</span><h2 id="authTitle">Welcome back.</h2><p id="authSubtitle">Sign in to continue building your opportunity profile.</p></div>
+        <div class="auth-tabs"><button class="auth-tab active" data-auth-mode="login">Log in</button><button class="auth-tab" data-auth-mode="signup">Create account</button></div>
+        <button class="google-button" id="googleAuth" type="button"><span class="google-g">G</span><span>Continue with Google</span></button>
+        <div class="auth-divider"><span>or continue with email</span></div>
+        <form id="authForm" novalidate>
+          <label class="auth-field signup-only hidden">Full name<input id="authName" type="text" autocomplete="name" placeholder="e.g. Rahul Sharma" /></label>
+          <label class="auth-field">Email address<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required /></label>
+          <div class="auth-field"><label for="authPassword">Password <span class="field-note">8+ characters</span></label><div class="password-wrap"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Enter your password" required /><button type="button" id="togglePassword" aria-label="Show password">Show</button></div></div>
+          <label class="auth-check signup-only hidden"><input type="checkbox" id="authConsent" /> <span>I agree to ez Foundation’s privacy and safety terms.</span></label>
+          <p class="auth-error" id="authError" role="alert"></p>
+          <button class="button button-primary auth-submit" type="submit" id="authSubmit">Log in <span>→</span></button>
+        </form>
+        <p class="auth-safety">🔒 Your information is private and never sold.</p>
+      </section>
+    </div>
+    <div class="toast" id="toast"><span>✦</span><span id="toastText">Your profile is ready to grow.</span></div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
